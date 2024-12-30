@@ -1,0 +1,423 @@
+
+
+import pandas as pd
+     
+
+data=pd.read_csv("/content/drive/MyDrive/healthcare-dataset-stroke-data.csv")
+     
+
+data.head()
+     
+id	gender	age	hypertension	heart_disease	ever_married	work_type	Residence_type	avg_glucose_level	bmi	smoking_status	stroke
+0	9046	Male	67.0	0	1	Yes	Private	Urban	228.69	36.6	formerly smoked	1
+1	51676	Female	61.0	0	0	Yes	Self-employed	Rural	202.21	NaN	never smoked	1
+2	31112	Male	80.0	0	1	Yes	Private	Rural	105.92	32.5	never smoked	1
+3	60182	Female	49.0	0	0	Yes	Private	Urban	171.23	34.4	smokes	1
+4	1665	Female	79.0	1	0	Yes	Self-employed	Rural	174.12	24.0	never smoked	1
+
+data.info()
+     
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 5110 entries, 0 to 5109
+Data columns (total 12 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   id                 5110 non-null   int64  
+ 1   gender             5110 non-null   object 
+ 2   age                5110 non-null   float64
+ 3   hypertension       5110 non-null   int64  
+ 4   heart_disease      5110 non-null   int64  
+ 5   ever_married       5110 non-null   object 
+ 6   work_type          5110 non-null   object 
+ 7   Residence_type     5110 non-null   object 
+ 8   avg_glucose_level  5110 non-null   float64
+ 9   bmi                4909 non-null   float64
+ 10  smoking_status     5110 non-null   object 
+ 11  stroke             5110 non-null   int64  
+dtypes: float64(3), int64(4), object(5)
+memory usage: 479.2+ KB
+
+data.isnull().sum()
+     
+id                     0
+gender                 0
+age                    0
+hypertension           0
+heart_disease          0
+ever_married           0
+work_type              0
+Residence_type         0
+avg_glucose_level      0
+bmi                  201
+smoking_status         0
+stroke                 0
+dtype: int64
+
+data= data.dropna(subset=['bmi'],axis='rows')
+     
+
+data.isnull().sum()
+     
+id                   0
+gender               0
+age                  0
+hypertension         0
+heart_disease        0
+ever_married         0
+work_type            0
+Residence_type       0
+avg_glucose_level    0
+bmi                  0
+smoking_status       0
+stroke               0
+dtype: int64
+
+data.info()
+     
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 4909 entries, 0 to 5109
+Data columns (total 12 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   id                 4909 non-null   int64  
+ 1   gender             4909 non-null   object 
+ 2   age                4909 non-null   float64
+ 3   hypertension       4909 non-null   int64  
+ 4   heart_disease      4909 non-null   int64  
+ 5   ever_married       4909 non-null   object 
+ 6   work_type          4909 non-null   object 
+ 7   Residence_type     4909 non-null   object 
+ 8   avg_glucose_level  4909 non-null   float64
+ 9   bmi                4909 non-null   float64
+ 10  smoking_status     4909 non-null   object 
+ 11  stroke             4909 non-null   int64  
+dtypes: float64(3), int64(4), object(5)
+memory usage: 498.6+ KB
+
+from sklearn import preprocessing
+label_encoder = preprocessing.LabelEncoder()
+data['gender'] = label_encoder.fit_transform(data['gender'])
+data['gender'].unique()
+
+data['ever_married'] = label_encoder.fit_transform(data['ever_married'])
+data['ever_married'].unique()
+
+data['work_type'] = label_encoder.fit_transform(data['work_type'])
+data['work_type'].unique()
+
+data['Residence_type'] = label_encoder.fit_transform(data['Residence_type'])
+data['Residence_type'].unique()
+
+data['smoking_status'] = label_encoder.fit_transform(data['work_type'])
+data['smoking_status'].unique()
+     
+array([2, 3, 0, 4, 1])
+
+data.info()
+     
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 4909 entries, 0 to 5109
+Data columns (total 12 columns):
+ #   Column             Non-Null Count  Dtype  
+---  ------             --------------  -----  
+ 0   id                 4909 non-null   int64  
+ 1   gender             4909 non-null   int64  
+ 2   age                4909 non-null   float64
+ 3   hypertension       4909 non-null   int64  
+ 4   heart_disease      4909 non-null   int64  
+ 5   ever_married       4909 non-null   int64  
+ 6   work_type          4909 non-null   int64  
+ 7   Residence_type     4909 non-null   int64  
+ 8   avg_glucose_level  4909 non-null   float64
+ 9   bmi                4909 non-null   float64
+ 10  smoking_status     4909 non-null   int64  
+ 11  stroke             4909 non-null   int64  
+dtypes: float64(3), int64(9)
+memory usage: 498.6 KB
+
+df=data.values
+# split into input (X) and output (Y) variables
+X = df[:,0:11].astype(float)
+Y = df[:,11]
+
+     
+
+X.shape
+     
+(4909, 11)
+
+Y.shape
+     
+(4909,)
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split( X,Y,test_size=0.33)
+     
+
+
+     
+
+'''X = df_final.drop(['left'],axis=1).values
+y = df_final['left'].values '''
+     
+"X = df_final.drop(['left'],axis=1).values\ny = df_final['left'].values "
+
+import tensorflow as tf
+print(tf.__version__)
+     
+2.4.1
+
+model = tf.keras.models.Sequential([
+                                    tf.keras.layers.Dense(128, input_shape=(2,), activation='relu'),
+                                    tf.keras.layers.Dense(1,activation='sigmoid')
+])
+     
+
+X_train.shape
+     
+(3289, 11)
+
+from keras.models import Sequential
+from keras.layers import Dense, Dropout
+# create model
+model = Sequential()
+model.add(Dense(128, input_dim=11, activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+# Compile model
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+     
+
+r = model.fit(X_train, y_train, epochs=100)
+     
+Epoch 1/100
+103/103 [==============================] - 1s 1ms/step - loss: 90.6612 - accuracy: 0.9111
+Epoch 2/100
+103/103 [==============================] - 0s 1ms/step - loss: 28.9021 - accuracy: 0.9171
+Epoch 3/100
+103/103 [==============================] - 0s 1ms/step - loss: 27.3549 - accuracy: 0.8906
+Epoch 4/100
+103/103 [==============================] - 0s 1ms/step - loss: 20.3148 - accuracy: 0.8893
+Epoch 5/100
+103/103 [==============================] - 0s 1ms/step - loss: 22.2726 - accuracy: 0.9017
+Epoch 6/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.1650 - accuracy: 0.9173
+Epoch 7/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.2914 - accuracy: 0.9229
+Epoch 8/100
+103/103 [==============================] - 0s 1ms/step - loss: 16.3377 - accuracy: 0.8992
+Epoch 9/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.9665 - accuracy: 0.9163
+Epoch 10/100
+103/103 [==============================] - 0s 1ms/step - loss: 26.2426 - accuracy: 0.8862
+Epoch 11/100
+103/103 [==============================] - 0s 1ms/step - loss: 20.3061 - accuracy: 0.9122
+Epoch 12/100
+103/103 [==============================] - 0s 1ms/step - loss: 13.5748 - accuracy: 0.8963
+Epoch 13/100
+103/103 [==============================] - 0s 1ms/step - loss: 23.5419 - accuracy: 0.9195
+Epoch 14/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.7475 - accuracy: 0.8867
+Epoch 15/100
+103/103 [==============================] - 0s 1ms/step - loss: 22.0765 - accuracy: 0.9086
+Epoch 16/100
+103/103 [==============================] - 0s 1ms/step - loss: 26.9305 - accuracy: 0.9148
+Epoch 17/100
+103/103 [==============================] - 0s 1ms/step - loss: 21.7763 - accuracy: 0.8958
+Epoch 18/100
+103/103 [==============================] - 0s 1ms/step - loss: 15.8643 - accuracy: 0.8933
+Epoch 19/100
+103/103 [==============================] - 0s 1ms/step - loss: 22.9274 - accuracy: 0.9112
+Epoch 20/100
+103/103 [==============================] - 0s 1ms/step - loss: 12.9939 - accuracy: 0.9035
+Epoch 21/100
+103/103 [==============================] - 0s 1ms/step - loss: 20.7903 - accuracy: 0.9038
+Epoch 22/100
+103/103 [==============================] - 0s 1ms/step - loss: 25.6327 - accuracy: 0.8891
+Epoch 23/100
+103/103 [==============================] - 0s 1ms/step - loss: 21.0381 - accuracy: 0.8913
+Epoch 24/100
+103/103 [==============================] - 0s 1ms/step - loss: 16.7762 - accuracy: 0.9011
+Epoch 25/100
+103/103 [==============================] - 0s 1ms/step - loss: 22.4722 - accuracy: 0.9321
+Epoch 26/100
+103/103 [==============================] - 0s 1ms/step - loss: 21.3567 - accuracy: 0.9220
+Epoch 27/100
+103/103 [==============================] - 0s 1ms/step - loss: 9.8165 - accuracy: 0.9114
+Epoch 28/100
+103/103 [==============================] - 0s 1ms/step - loss: 25.8815 - accuracy: 0.9253
+Epoch 29/100
+103/103 [==============================] - 0s 1ms/step - loss: 25.5545 - accuracy: 0.8865
+Epoch 30/100
+103/103 [==============================] - 0s 1ms/step - loss: 22.3403 - accuracy: 0.9102
+Epoch 31/100
+103/103 [==============================] - 0s 1ms/step - loss: 27.8872 - accuracy: 0.9335
+Epoch 32/100
+103/103 [==============================] - 0s 1ms/step - loss: 18.5488 - accuracy: 0.9105
+Epoch 33/100
+103/103 [==============================] - 0s 1ms/step - loss: 23.2517 - accuracy: 0.9213
+Epoch 34/100
+103/103 [==============================] - 0s 1ms/step - loss: 15.4532 - accuracy: 0.9040
+Epoch 35/100
+103/103 [==============================] - 0s 1ms/step - loss: 6.4867 - accuracy: 0.9103
+Epoch 36/100
+103/103 [==============================] - 0s 1ms/step - loss: 9.7413 - accuracy: 0.8907
+Epoch 37/100
+103/103 [==============================] - 0s 1ms/step - loss: 25.1431 - accuracy: 0.9237
+Epoch 38/100
+103/103 [==============================] - 0s 1ms/step - loss: 14.8910 - accuracy: 0.8867
+Epoch 39/100
+103/103 [==============================] - 0s 1ms/step - loss: 29.8547 - accuracy: 0.9265
+Epoch 40/100
+103/103 [==============================] - 0s 1ms/step - loss: 9.7875 - accuracy: 0.9143
+Epoch 41/100
+103/103 [==============================] - 0s 1ms/step - loss: 25.4193 - accuracy: 0.8866
+Epoch 42/100
+103/103 [==============================] - 0s 1ms/step - loss: 21.0203 - accuracy: 0.8987
+Epoch 43/100
+103/103 [==============================] - 0s 1ms/step - loss: 13.2166 - accuracy: 0.9227
+Epoch 44/100
+103/103 [==============================] - 0s 1ms/step - loss: 14.7094 - accuracy: 0.9081
+Epoch 45/100
+103/103 [==============================] - 0s 1ms/step - loss: 15.5280 - accuracy: 0.9171
+Epoch 46/100
+103/103 [==============================] - 0s 2ms/step - loss: 15.0642 - accuracy: 0.8958
+Epoch 47/100
+103/103 [==============================] - 0s 1ms/step - loss: 14.5835 - accuracy: 0.9000
+Epoch 48/100
+103/103 [==============================] - 0s 1ms/step - loss: 23.8238 - accuracy: 0.9029
+Epoch 49/100
+103/103 [==============================] - 0s 1ms/step - loss: 13.3440 - accuracy: 0.9280
+Epoch 50/100
+103/103 [==============================] - 0s 1ms/step - loss: 11.5431 - accuracy: 0.9208
+Epoch 51/100
+103/103 [==============================] - 0s 1ms/step - loss: 22.7817 - accuracy: 0.9226
+Epoch 52/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.3613 - accuracy: 0.9305
+Epoch 53/100
+103/103 [==============================] - 0s 1ms/step - loss: 14.6010 - accuracy: 0.9199
+Epoch 54/100
+103/103 [==============================] - 0s 1ms/step - loss: 29.4009 - accuracy: 0.8765
+Epoch 55/100
+103/103 [==============================] - 0s 1ms/step - loss: 15.2748 - accuracy: 0.8942
+Epoch 56/100
+103/103 [==============================] - 0s 1ms/step - loss: 11.1356 - accuracy: 0.9067
+Epoch 57/100
+103/103 [==============================] - 0s 1ms/step - loss: 15.6861 - accuracy: 0.9281
+Epoch 58/100
+103/103 [==============================] - 0s 1ms/step - loss: 37.4584 - accuracy: 0.9289
+Epoch 59/100
+103/103 [==============================] - 0s 1ms/step - loss: 17.4339 - accuracy: 0.9234
+Epoch 60/100
+103/103 [==============================] - 0s 1ms/step - loss: 16.3578 - accuracy: 0.9102
+Epoch 61/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.4055 - accuracy: 0.9211
+Epoch 62/100
+103/103 [==============================] - 0s 1ms/step - loss: 20.8513 - accuracy: 0.9117
+Epoch 63/100
+103/103 [==============================] - 0s 1ms/step - loss: 13.4124 - accuracy: 0.9068
+Epoch 64/100
+103/103 [==============================] - 0s 1ms/step - loss: 17.8920 - accuracy: 0.9233
+Epoch 65/100
+103/103 [==============================] - 0s 1ms/step - loss: 16.1460 - accuracy: 0.9196
+Epoch 66/100
+103/103 [==============================] - 0s 1ms/step - loss: 10.5162 - accuracy: 0.9251
+Epoch 67/100
+103/103 [==============================] - 0s 1ms/step - loss: 26.2065 - accuracy: 0.9166
+Epoch 68/100
+103/103 [==============================] - 0s 1ms/step - loss: 5.0010 - accuracy: 0.9035
+Epoch 69/100
+103/103 [==============================] - 0s 1ms/step - loss: 12.4127 - accuracy: 0.8989
+Epoch 70/100
+103/103 [==============================] - 0s 1ms/step - loss: 18.6665 - accuracy: 0.8960
+Epoch 71/100
+103/103 [==============================] - 0s 1ms/step - loss: 17.0396 - accuracy: 0.9078
+Epoch 72/100
+103/103 [==============================] - 0s 1ms/step - loss: 13.9647 - accuracy: 0.9194
+Epoch 73/100
+103/103 [==============================] - 0s 1ms/step - loss: 10.2311 - accuracy: 0.9136
+Epoch 74/100
+103/103 [==============================] - 0s 1ms/step - loss: 14.1770 - accuracy: 0.9111
+Epoch 75/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.8715 - accuracy: 0.9387
+Epoch 76/100
+103/103 [==============================] - 0s 1ms/step - loss: 8.6393 - accuracy: 0.9257
+Epoch 77/100
+103/103 [==============================] - 0s 1ms/step - loss: 10.9774 - accuracy: 0.9055
+Epoch 78/100
+103/103 [==============================] - 0s 1ms/step - loss: 14.0540 - accuracy: 0.9040
+Epoch 79/100
+103/103 [==============================] - 0s 1ms/step - loss: 11.9541 - accuracy: 0.9275
+Epoch 80/100
+103/103 [==============================] - 0s 1ms/step - loss: 13.9867 - accuracy: 0.9136
+Epoch 81/100
+103/103 [==============================] - 0s 1ms/step - loss: 12.2380 - accuracy: 0.9089
+Epoch 82/100
+103/103 [==============================] - 0s 1ms/step - loss: 19.6530 - accuracy: 0.9344
+Epoch 83/100
+103/103 [==============================] - 0s 1ms/step - loss: 12.6873 - accuracy: 0.9113
+Epoch 84/100
+103/103 [==============================] - 0s 1ms/step - loss: 17.4622 - accuracy: 0.9152
+Epoch 85/100
+103/103 [==============================] - 0s 1ms/step - loss: 10.9112 - accuracy: 0.9306
+Epoch 86/100
+103/103 [==============================] - 0s 1ms/step - loss: 18.2770 - accuracy: 0.9254
+Epoch 87/100
+103/103 [==============================] - 0s 1ms/step - loss: 16.6841 - accuracy: 0.9349
+Epoch 88/100
+103/103 [==============================] - 0s 1ms/step - loss: 11.0992 - accuracy: 0.9269
+Epoch 89/100
+103/103 [==============================] - 0s 1ms/step - loss: 22.1989 - accuracy: 0.9431
+Epoch 90/100
+103/103 [==============================] - 0s 1ms/step - loss: 7.0816 - accuracy: 0.9229
+Epoch 91/100
+103/103 [==============================] - 0s 1ms/step - loss: 5.9217 - accuracy: 0.9051
+Epoch 92/100
+103/103 [==============================] - 0s 1ms/step - loss: 17.0680 - accuracy: 0.9155
+Epoch 93/100
+103/103 [==============================] - 0s 1ms/step - loss: 11.5789 - accuracy: 0.9199
+Epoch 94/100
+103/103 [==============================] - 0s 1ms/step - loss: 11.1245 - accuracy: 0.9268
+Epoch 95/100
+103/103 [==============================] - 0s 1ms/step - loss: 14.2912 - accuracy: 0.9098
+Epoch 96/100
+103/103 [==============================] - 0s 1ms/step - loss: 7.1414 - accuracy: 0.9027
+Epoch 97/100
+103/103 [==============================] - 0s 1ms/step - loss: 7.3363 - accuracy: 0.9325
+Epoch 98/100
+103/103 [==============================] - 0s 1ms/step - loss: 11.4058 - accuracy: 0.9214
+Epoch 99/100
+103/103 [==============================] - 0s 1ms/step - loss: 18.2934 - accuracy: 0.9219
+Epoch 100/100
+103/103 [==============================] - 0s 1ms/step - loss: 13.7000 - accuracy: 0.9173
+
+!pip install keras_sequential_ascii
+     
+Collecting keras_sequential_ascii
+  Downloading https://files.pythonhosted.org/packages/2d/a4/806e3ed5d7ac7463e2fae77e09ccccc88c78266b248fb637e4efa4f65ec0/keras_sequential_ascii-0.1.1.tar.gz
+Requirement already satisfied: keras in /usr/local/lib/python3.7/dist-packages (from keras_sequential_ascii) (2.4.3)
+Requirement already satisfied: h5py in /usr/local/lib/python3.7/dist-packages (from keras->keras_sequential_ascii) (2.10.0)
+Requirement already satisfied: pyyaml in /usr/local/lib/python3.7/dist-packages (from keras->keras_sequential_ascii) (3.13)
+Requirement already satisfied: numpy>=1.9.1 in /usr/local/lib/python3.7/dist-packages (from keras->keras_sequential_ascii) (1.19.5)
+Requirement already satisfied: scipy>=0.14 in /usr/local/lib/python3.7/dist-packages (from keras->keras_sequential_ascii) (1.4.1)
+Requirement already satisfied: six in /usr/local/lib/python3.7/dist-packages (from h5py->keras->keras_sequential_ascii) (1.15.0)
+Building wheels for collected packages: keras-sequential-ascii
+  Building wheel for keras-sequential-ascii (setup.py) ... done
+  Created wheel for keras-sequential-ascii: filename=keras_sequential_ascii-0.1.1-cp37-none-any.whl size=3062 sha256=9db76a46b001ffc25a7c668d682f148a821f41ce6a264fce47db78790e9aed64
+  Stored in directory: /root/.cache/pip/wheels/f5/8d/81/912666dff82a923ce423a7e797cd75f54271c7031512cdb282
+Successfully built keras-sequential-ascii
+Installing collected packages: keras-sequential-ascii
+Successfully installed keras-sequential-ascii-0.1.1
+
+from keras_sequential_ascii import keras2ascii
+keras2ascii(model)
+     
+           OPERATION           DATA DIMENSIONS   WEIGHTS(N)   WEIGHTS(%)
+
+               Input   #####          11
+               Dense   XXXXX -------------------      1536    92.3%
+                relu   #####         128
+               Dense   XXXXX -------------------       129     7.7%
+             sigmoid   #####           1
+
+
+     
